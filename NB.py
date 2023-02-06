@@ -49,8 +49,12 @@ def app():
     for key in data[0]:
         if(key != "USMER" and key != "MEDICAL_UNIT" and key != "AGE" and key != "CLASIFFICATION_FINAL"):
             data[0][key] = st.selectbox(key,list(categorical_dict[key]))
-        else:
-            data[0][key] = st.number_input(key, min_value=1, max_value=10, value=5, step=1)
+        elif(key == "USMER"):
+            data[0][key] = st.number_input(key, min_value=1, max_value=2, value=1, step=1)
+        elif(key == "MEDICAL_UNIT"):
+            data[0][key] = st.number_input(key, min_value=1, max_value=13, value=1, step=1)
+        elif(key == "AGE"):
+            data[0][key] = st.number_input(key, min_value=1, max_value=121, value=20, step=1)
             
     df = pd.DataFrame.from_records(data=data)
     

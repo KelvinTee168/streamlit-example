@@ -46,11 +46,15 @@ def app():
     for key in data[0]:
         if(key != "USMER" and key != "MEDICAL_UNIT" and key != "AGE" and key != "CLASIFFICATION_FINAL"):
             data[0][key] = st.selectbox(key,list(categorical_dict[key]))
-        else:
-            data[0][key] = st.number_input(key, min_value=1, max_value=10, value=5, step=1)
+        elif(key == "USMER"):
+            data[0][key] = st.number_input(key, min_value=1, max_value=2, value=1, step=1)
+        elif(key == "MEDICAL_UNIT"):
+            data[0][key] = st.number_input(key, min_value=1, max_value=13, value=1, step=1)
+        elif(key == "AGE"):
+            data[0][key] = st.number_input(key, min_value=1, max_value=121, value=20, step=1)
             
     df = pd.DataFrame.from_records(data=data)
-    
+        
     rfe_top20 = pd.read_csv('RFE_Top20.csv')
     
     col_list = [col for col in df.columns.tolist() if df[col].dtype.name == "object"]
@@ -64,14 +68,15 @@ def app():
     for feature in rfe_top20['Features']:
         if feature not in df.columns:
             X[feature] = 0
-    
-    sc = StandardScaler()
-    X_ss = sc.fit_transform(X[rfe_top20['Features']])
-    
+                
+    sc = pickle.load(open('scaler.pkl', 'rb'))
+    X_ss = sc.transform(X[rfe_top20['Features']])
+        
     pred = loaded_model.predict(X_ss)
+    
+    st.write("## Prediction")
     
     st.write(pred)
     pred = np.argmax(pred, axis=1)
     
-    st.write("## Prediction")
     st.write('Predicted CLASSIFICATION_FINAL: ', pred[0])
